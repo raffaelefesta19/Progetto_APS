@@ -1,0 +1,10 @@
+# Python backend runtime data
+backend/keys/
+backend/store.json
+backend/__pycache__/
+backend/.venv/
+
+# Node build artifacts handled in frontend
+progetto_aps/node_modules/
+progetto_aps/dist/
+progetto_aps/dist-ssr/

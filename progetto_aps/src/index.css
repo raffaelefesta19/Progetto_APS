@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+/* Global reset per full-screen login senza scrollbar */
+html, body, #root {
+  height: 100%;
+}
+body {
+  overflow: hidden; /* niente barre di scroll sul login full-screen */
+}
+
+/* Cursor pointer su elementi interattivi */
+button, [role="button"], a, input[type="checkbox"], input[type="radio"] {
+  cursor: pointer;
+}
+
+/* ---------- PUBLIC LAYOUT (login/register) ---------- */
+@layer components {
+  .public-wrap     { @apply relative min-h-screen grid place-items-center bg-slate-950; }
+  .public-bg       { @apply absolute inset-0 object-cover w-full h-full; }
+  .public-overlay  { @apply absolute inset-0 bg-slate-950/60; }
+  .public-content  { @apply relative z-10 w-full max-w-md px-4; }
+
+  .public-blob     { @apply pointer-events-none absolute rounded-full blur-3xl; }
+  .public-blob--tl { @apply -top-24 -left-24 w-72 h-72 bg-blue-600/25; }
+  .public-blob--br { @apply -bottom-24 -right-24 w-72 h-72 bg-cyan-500/25; }
+
+  /* Card vetrosa */
+  .glass-card      { @apply rounded-2xl border border-white/10 bg-white/10 backdrop-blur-xl shadow-2xl p-6; }
+  .card-title      { @apply text-white text-2xl font-semibold text-center mb-5; }
+
+  /* Inputs / labels */
+  .field           { @apply mb-3; }
+  .label           { @apply block text-xs text-white/70 mb-1; }
+  .input           { @apply w-full rounded-xl bg-white/10 text-white placeholder-white/60 border border-white/20 px-4 py-2.5 outline-none focus:border-blue-400; }
+  .row             { @apply flex items-center justify-between text-xs text-white/70 mb-4; }
+
+  /* Tabs ruolo */
+  .segmented       { @apply grid grid-cols-3 gap-2 mb-4; }
+  .seg-btn         { @apply rounded-xl px-3 py-2 text-center bg-white/10 text-white/70 border border-white/10 hover:bg-white/15; }
+  .seg-btn--active { @apply bg-blue-600 text-white border-blue-600; }
+
+  /* Bottoni */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-xl text-sm font-medium transition;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-xl text-sm font-medium transition
+    bg-blue-600 text-white hover:bg-blue-700 w-full;
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-xl text-sm font-medium transition
+    border text-slate-700 hover:bg-slate-50;
+  }
+
+  /* Animazione ingresso card (fade + slight slide) */
+  .card-anim {
+    transition: opacity 300ms ease-out, transform 300ms ease-out;
+  }
+  .card-anim[data-state="enter"] {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  /* Link testuali */
+  .link            { @apply underline hover:opacity-80; }
+}
+
+@layer components {
+  /* Cards chiare per le dashboard */
+  .panel       { @apply bg-white border rounded-xl p-4; }
+  .panel-title { @apply font-semibold mb-3; }
+
+  /* Input per sfondo chiaro (dashboard) */
+  .input-light { @apply w-full rounded-xl bg-white text-slate-900 placeholder-slate-400
+  border border-slate-300 px-4 py-2.5 outline-none
+  focus:border-blue-400; }
+
+  /* Chip per filtrare (attivo/inattivo) */
+  .chip        { @apply px-2 py-1 rounded-full text-xs border text-slate-700 hover:bg-slate-50; }
+  .chip--on    { @apply bg-slate-900 text-white border-slate-900; }
+
+  /* Badge di stato */
+  .badge       { @apply px-2 py-1 rounded-full text-xs font-medium; }
+  .badge-ok    { @apply px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700; }
+  .badge-warn  { @apply px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700; }
+  .badge-err   { @apply px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700; }
+
+  /* Testi secondari */
+  .muted       { @apply text-sm text-slate-500; }
+
+  /* Sub-nav discreta */
+  .subnav     { @apply flex items-center gap-2; }
+  .pill       { @apply px-3 py-1 rounded-full text-xs border text-slate-600 hover:bg-slate-100; }
+  .pill--pri  { @apply bg-slate-900 text-white border-slate-900; }
+}
+@layer components {
+  /* Lista collassata: mostra ~3.3 elementi e sfuma il fondo verso il bianco della card */
+  .collapsed-list {
+    @apply relative overflow-hidden;
+    max-height: 236px;                 /* ~3 righe + un pezzetto della 4a */
+  }
+  .collapsed-list::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 72px;                       /* lunghezza sfumatura */
+    pointer-events: none;
+    background: linear-gradient(
+            to bottom,
+            rgba(255,255,255,0) 0%,
+            rgba(255,255,255,0.85) 60%,
+            rgba(255,255,255,1) 100%
+    );                                   /* termina sul bianco della .panel */
+  }
+}
+@layer components {
+  .badge-info { @apply px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700; }
+}
+
