@@ -11,7 +11,6 @@ export default function PublicLayout({
 }) {
     return (
         <div className="public-wrap">
-            {/* Background video/image */}
             {bgVideo ? (
                 <video
                     className="public-bg"
@@ -31,15 +30,9 @@ export default function PublicLayout({
                     }}
                 />
             ) : null}
-
-            {/* overlay per contrasto */}
             <div className="public-overlay" />
-
-            {/* neon soft blobs */}
             <div className="public-blob public-blob--tl" />
             <div className="public-blob public-blob--br" />
-
-            {/* contenuto */}
             <div className="public-content">{children}</div>
         </div>
     );

@@ -11,19 +11,15 @@ export default function App() {
     return (
         <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
-
-
             <Route element={<PublicShell />}>
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
             </Route>
-
             {/* dashboard */}
             <Route path="/patient" element={<Patient />} />
             <Route path="/hospital" element={<Hospital />} />
             <Route path="/lab" element={<Lab />} />
             <Route path="/ledger" element={<Ledger />} />
-
             <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
     );

@@ -25,7 +25,7 @@ export default function Login() {
             const u = await login(username.trim(), password);
             if (u.role === "PAT") nav("/patient");
             else if (u.role === "LAB") nav("/lab");
-            else nav("/hospital");
+            else nav("/hospital"); // HOSP o DOC
         } catch (e: unknown) {
             setErr(e instanceof Error ? e.message : "Login fallita");
         } finally {
@@ -43,25 +43,12 @@ export default function Login() {
 
             <div className="field">
                 <label className="label">Username</label>
-                <input
-                    className="input"
-                    placeholder="es. pat1"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    onKeyDown={onKey}
-                />
+                <input className="input" placeholder="es. mariorossi" value={username} onChange={(e) => setUsername(e.target.value)} onKeyDown={onKey} />
             </div>
 
             <div className="field">
                 <label className="label">Password</label>
-                <input
-                    className="input"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    onKeyDown={onKey}
-                />
+                <input className="input" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={onKey} />
             </div>
 
             {err && <div className="text-red-300 text-sm mb-2">{err}</div>}
@@ -79,6 +66,7 @@ export default function Login() {
                 <div>• Paziente: <code>pat1 / pat1pass</code></div>
                 <div>• Laboratorio: <code>lab1 / lab1pass</code></div>
                 <div>• Ospedale: <code>hosp1 / hosp1pass</code></div>
+                <div>• Medico: <code>doc1 / doc1pass</code></div>
             </div>
         </div>
     );

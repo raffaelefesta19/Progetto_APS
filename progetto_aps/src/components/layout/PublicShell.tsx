@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import PublicLayout from "./PublicLayout";
 
 export default function PublicShell() {
-    // niente scrollbar nelle view pubbliche
     useEffect(() => {
         const prev = document.body.style.overflow;
         document.body.style.overflow = "hidden";
@@ -12,7 +11,6 @@ export default function PublicShell() {
 
     return (
         <PublicLayout bgVideo="/videoplayback.mp4">
-            {/* slot centrale persistente: qui cambia solo la card */}
             <div className="public-content">
                 <Outlet />
             </div>

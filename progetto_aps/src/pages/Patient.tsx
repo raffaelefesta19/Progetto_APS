@@ -1,205 +1,280 @@
 import { useMemo, useState } from "react";
 import RoleLayout from "../components/layout/RoleLayout";
-import { HOSPITALS, useReports } from "../store/ReportsContext";
-import type { Status, Report } from "../store/ReportsContext";
+import { useReports } from "../store/ReportsContext";
+import type { Report } from "../store/ReportsContext";
 import { useAuth } from "../auth/AuthContext";
+import ExpandableList from "../components/ui/ExpandableList";
 
 const API_BASE = "/api";
 
 export default function Patient() {
-    const { reports, refresh, error: reportsError } = useReports();
+    const { reports, refresh, error: reportsError, recipientRoles } = useReports();
     const { user } = useAuth();
+    const PAT_ID = user?.uid ?? "PAT-123";
 
-    const currentPatient = user?.uid ?? "";
-
-    const mine = useMemo(() => reports.filter((r) => r.patientRef === currentPatient), [reports, currentPatient]);
-
-    const [query, setQuery] = useState("");
-    const [labFilter, setLabFilter] = useState<"ALL" | string>("ALL");
-    const [showAll, setShowAll] = useState(false);
-    const [openId, setOpenId] = useState<string | null>(null);
-
-    const labOptions = useMemo(() => Array.from(new Set(mine.map((r) => r.labId))).sort(), [mine]);
-
+    const mine = useMemo(() => reports.filter((r) => r.patientRef === PAT_ID), [reports, PAT_ID]);
     const sorted = useMemo(() => [...mine].sort((a, b) => +new Date(b.issuedAt) - +new Date(a.issuedAt)), [mine]);
 
-    const filtered = useMemo(() => {
-        const q = query.trim().toLowerCase();
-        return sorted.filter((r) => {
-            const byLab = labFilter === "ALL" || r.labId === labFilter;
-            const byQ = q === "" || r.reportId.toLowerCase().includes(q) || r.labId.toLowerCase().includes(q);
-            return byLab && byQ;
-        });
-    }, [sorted, labFilter, query]);
+    // share modal
+    const [shareFor, setShareFor] = useState<Report | null>(null);
+    const [hospId, setHospId] = useState("");
+    const [busy, setBusy] = useState(false);
+    const [err, setErr] = useState<string | null>(null);
 
-    const collapsed = filtered.length > 3 && !showAll;
+    // revoke confirm modal
+    const [revokeFor, setRevokeFor] = useState<{ report: Report; hosp: string } | null>(null);
+
+    const doShare = async () => {
+        if (!shareFor || !hospId.trim()) return;
+        setBusy(true); setErr(null);
+        try {
+            await fetch(`${API_BASE}/keys/init`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ actors: [PAT_ID, hospId.trim()] }),
+            }).catch(() => {});
+            // IMPORTANT: condivido sempre sulla VERSIONE CORRENTE
+            const resp = await fetch(`${API_BASE}/patient/share`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ reportId: shareFor.currentId, patientId: PAT_ID, hospitalId: hospId.trim() }),
+            });
+            if (!resp.ok) throw new Error("Impossibile condividere adesso. Riprova più tardi.");
+            await refresh();
+            setShareFor(null); setHospId("");
+        } catch (e) {
+            setErr(e instanceof Error ? e.message : "Errore imprevisto");
+        } finally {
+            setBusy(false);
+        }
+    };
 
     return (
-        <RoleLayout title="I miei referti">
+        <RoleLayout title="Spazio paziente">
             <section className="panel">
                 <h2 className="panel-title">Referti</h2>
-
-                <div className="relative">
-                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fillRule="evenodd" d="M12.9 14.32a7 7 0 1 1 1.414-1.414l3.387 3.387a1 1 0 0 1-1.414 1.414l-3.387-3.387ZM8 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" clipRule="evenodd" />
-                    </svg>
-                    <input className="input-light pl-9" placeholder="Cerca per reportId o laboratorio…" value={query} onChange={(e) => setQuery(e.target.value)} />
-                </div>
-
                 {reportsError && <div className="text-sm text-red-600 mt-2">{reportsError}</div>}
+                <div className="text-sm text-slate-500 mt-1">{sorted.length} risultati</div>
 
-                <div className="flex items-center gap-2 mt-3">
-                    <div className="text-sm text-slate-500">{filtered.length} risultati</div>
-                    <div className="flex-1" />
-                    <label className="text-sm text-slate-600">Laboratorio:</label>
-                    <select className="border rounded-lg px-2 py-1 text-sm" value={labFilter} onChange={(e) => setLabFilter(e.target.value)}>
-                        <option value="ALL">Tutti</option>
-                        {labOptions.map((l) => (<option key={l} value={l}>{l}</option>))}
-                    </select>
+                <div className="mt-3">
+                    <ExpandableList
+                        items={sorted}
+                        initiallyVisible={3}
+                        renderItem={(r) => (
+                            <Row
+                                key={r.reportId}
+                                r={r}
+                                recipientRoles={recipientRoles}
+                                onShare={() => { setShareFor(r); setHospId(""); setErr(null); }}
+                                onRevokeAccess={(hosp) => setRevokeFor({ report: r, hosp })}
+                            />
+                        )}
+                    />
                 </div>
-
-                <div className={`mt-4 grid gap-2 ${collapsed ? "collapsed-list" : ""}`}>
-                    {filtered.map((r) => (
-                        <ReportRow
-                            key={r.reportId}
-                            r={{ reportId: r.reportId, labId: r.labId, issuedAt: r.issuedAt, status: r.status as Status }}
-                            onOpen={() => setOpenId(r.reportId)}
-                        />
-                    ))}
-                </div>
-
-                {filtered.length > 3 && (
-                    <div className="flex justify-center mt-3">
-                        <button className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg border text-sm hover:bg-slate-50" onClick={() => setShowAll((s) => !s)}>
-                            {showAll ? "Mostra meno" : "Mostra tutti"}
-                        </button>
-                    </div>
-                )}
             </section>
 
-            <ReportModal
-                report={filtered.find((r) => r.reportId === openId) || null}
-                onClose={() => setOpenId(null)}
-                onToggleAccess={async (reportId, dest, allow) => {
-                    if (!allow) {
-                        try {
-                            const resp = await fetch(`${API_BASE}/patient/unshare`, {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ reportId, patientId: currentPatient, hospitalId: dest }),
-                            });
-                            if (!resp.ok) throw new Error(await resp.text() || `HTTP ${resp.status}`);
-                            await refresh();
-                        } catch (e) {
-                            alert(e instanceof Error ? e.message : "Revoca fallita");
-                        }
-                        return;
-                    }
-                    try {
-                        // bootstrap chiavi per sicurezza
-                        await fetch(`${API_BASE}/keys/init`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ actors: [currentPatient, dest] }),
-                        });
+            {/* Condividi */}
+            {shareFor && (
+                <ShareModal
+                    report={shareFor}
+                    hospId={hospId}
+                    setHospId={setHospId}
+                    busy={busy}
+                    error={err}
+                    onCancel={() => setShareFor(null)}
+                    onConfirm={() => void doShare()}
+                />
+            )}
 
-                        const resp = await fetch(`${API_BASE}/patient/share`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ reportId, patientId: currentPatient, hospitalId: dest }),
-                        });
-                        if (!resp.ok) throw new Error(await resp.text() || `HTTP ${resp.status}`);
-                        await refresh();
-                    } catch (e) {
-                        alert(e instanceof Error ? e.message : "Condivisione fallita");
-                    }
-                }}
-            />
+            {/* Revoca (soft) */}
+            {revokeFor && (
+                <RevokeConfirmModal
+                    reportId={revokeFor.report.currentId}     // revoca sulla versione corrente
+                    hospId={revokeFor.hosp}
+                    patientId={PAT_ID}
+                    onClose={() => setRevokeFor(null)}
+                    onRevoked={() => void refresh()}
+                />
+            )}
         </RoleLayout>
     );
 }
 
-function ReportRow({
-                       r,
-                       onOpen,
-                   }: {
-    r: { reportId: string; labId: string; issuedAt: string; status: Status };
-    onOpen: () => void;
+function Row({
+                 r,
+                 recipientRoles,
+                 onShare,
+                 onRevokeAccess,
+             }: {
+    r: Report;
+    recipientRoles: Record<string, "HOSP" | "DOC">;
+    onShare: () => void;
+    onRevokeAccess: (hospId: string) => void;
 }) {
-    const badge = r.status === "VALID" ? "badge-ok" : r.status === "UPDATED" ? "badge-warn" : "badge-err";
-    const dt = new Date(r.issuedAt);
-    const human = `${dt.toLocaleDateString()} ${dt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+    const badge =
+        r.status === "VALID" ? "badge-ok" : r.status === "UPDATED" ? "badge-warn" : "badge-err";
+    const when = new Date(r.issuedAt).toLocaleString();
+
+    const shareEnabled = r.isCurrent && r.status !== "REVOKED";
+    const revokeEnabled = r.isCurrent && r.status !== "REVOKED";
+
+    const accessList = r.isCurrent ? r.access : r.accessLocal;
 
     return (
-        <button type="button" onClick={onOpen} className="text-left flex items-center justify-between p-3 rounded-lg border bg-white hover:shadow-sm hover:border-slate-300 transition">
-            <div>
-                <div className="font-medium">{r.reportId}</div>
-                <div className="muted">Laboratorio {r.labId} • Emesso {human}</div>
+        <div className="flex items-center justify-between p-3 rounded-lg border bg-white">
+            <div className="min-w-0 flex-1">
+                <div className="font-medium truncate">
+                    {r.reportId} {r.isCurrent ? <span className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-1 ml-1">attuale</span> : <span className="text-xs text-slate-600 bg-slate-50 border rounded px-1 ml-1">sostituito → {r.currentId}</span>}
+                </div>
+                <div className="muted truncate">
+                    {r.examType || "—"} · {r.resultShort || "—"} · Emesso {when} · {r.labId}
+                </div>
+
+                {r.status === "UPDATED" && (
+                    <div className="text-xs text-amber-600 mt-0.5">
+                        Questa versione è stata sostituita da <span className="font-medium">{r.currentId}</span>.
+                    </div>
+                )}
+
+                <div className="text-xs text-slate-500 mt-2">Autorizzati ({r.isCurrent ? "versione attuale" : "questa versione"}):</div>
+                <div className="mt-1 flex flex-wrap gap-2">
+                    {accessList.length === 0 ? (
+                        <span className="text-xs text-slate-400">—</span>
+                    ) : (
+                        accessList.map((uid) => {
+                            const role = recipientRoles[uid] || "HOSP";
+                            const pill =
+                                role === "HOSP"
+                                    ? "bg-indigo-50 text-indigo-700 border-indigo-200"
+                                    : "bg-purple-50 text-purple-700 border-purple-200";
+                            return (
+                                <span key={uid} className={`inline-flex items-center gap-2 rounded-full border px-2 py-1 text-xs ${pill}`} title={`${role} ${uid}`}>
+                  <span className="font-medium">{uid}</span>
+                  <span className="rounded-full px-1.5 py-0.5 text-[10px] border">{role}</span>
+                                    {revokeEnabled && (
+                                        <button className="rounded-full border px-2 py-0.5 hover:bg-slate-100" onClick={() => onRevokeAccess(uid)}>
+                                            Revoca accesso
+                                        </button>
+                                    )}
+                </span>
+                            );
+                        })
+                    )}
+                </div>
             </div>
-            <span className={badge}>{r.status}</span>
-        </button>
+
+            <div className="ml-3 flex items-center gap-3">
+                <span className={badge}>{r.status}</span>
+                <button
+                    className={`px-3 py-1.5 rounded-lg border text-sm ${shareEnabled ? "hover:bg-slate-50" : "bg-slate-100 text-slate-400 cursor-not-allowed"}`}
+                    onClick={onShare}
+                    disabled={!shareEnabled}
+                    title={shareEnabled ? "Condividi versione attuale" : "Condividi disponibile solo sulla versione attuale non revocata"}
+                >
+                    Condividi
+                </button>
+            </div>
+        </div>
     );
 }
 
-function ReportModal({
-                         report,
-                         onClose,
-                         onToggleAccess,
-                     }: {
-    report: Report | null;
-    onClose: () => void;
-    onToggleAccess: (reportId: string, dest: string, allow: boolean) => void | Promise<void>;
+function ShareModal({
+                        report,
+                        hospId,
+                        setHospId,
+                        busy,
+                        error,
+                        onCancel,
+                        onConfirm,
+                    }: {
+    report: Report;
+    hospId: string;
+    setHospId: (v: string) => void;
+    busy?: boolean;
+    error: string | null;
+    onCancel: () => void;
+    onConfirm: () => void | Promise<void>;
 }) {
-    const [dest, setDest] = useState<string>(HOSPITALS[0]);
+    return (
+        <div className="fixed inset-0 z-50">
+            <div className="absolute inset-0 bg-black/40" onClick={onCancel} />
+            <div className="absolute inset-0 grid place-items-center p-4">
+                <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl p-6">
+                    <h3 className="text-lg font-semibold">Condividi (versione attuale) {report.currentId}</h3>
+                    <p className="text-sm text-slate-600 mt-1">
+                        Inserisci l’ID della struttura o del medico (es. <code>HOSP-01</code> o <code>DOC-01</code>).
+                    </p>
+                    <div className="mt-3">
+                        <label className="label">ID ospedale / medico</label>
+                        <input className="input-light" placeholder="Es. HOSP-01 o DOC-01" value={hospId} onChange={(e) => setHospId(e.target.value)} />
+                    </div>
+                    {error && <div className="text-sm text-red-600 mt-2">{error}</div>}
+                    <div className="mt-4 flex justify-end gap-2">
+                        <button className="px-3 py-1.5 rounded-lg border text-sm hover:bg-slate-50" onClick={onCancel} disabled={busy}>Annulla</button>
+                        <button className={`px-3 py-1.5 rounded-lg text-sm ${hospId.trim() ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-slate-200 text-slate-500 cursor-not-allowed"}`} onClick={onConfirm} disabled={!hospId.trim() || !!busy}>
+                            {busy ? "Condivido…" : "Concedi accesso"}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
 
-    if (!report) return null;
+function RevokeConfirmModal({
+                                reportId,
+                                hospId,
+                                patientId,
+                                onClose,
+                                onRevoked,
+                            }: {
+    reportId: string;
+    hospId: string;
+    patientId: string;
+    onClose: () => void;
+    onRevoked: () => void;
+}) {
+    const [busy, setBusy] = useState(false);
+    const [err, setErr] = useState<string | null>(null);
 
-    const dt = new Date(report.issuedAt);
-    const human = `${dt.toLocaleDateString()} ${dt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
-
-    const already = report.access.includes(dest);
+    const doRevoke = async () => {
+        setBusy(true); setErr(null);
+        try {
+            const resp = await fetch(`/api/patient/unshare`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ reportId, patientId, hospitalId: hospId }),
+            });
+            const text = await resp.text();
+            if (!resp.ok) throw new Error(text || "Revoca fallita");
+            onRevoked();
+            onClose();
+        } catch (e) {
+            setErr(e instanceof Error ? e.message : "Errore");
+        } finally {
+            setBusy(false);
+        }
+    };
 
     return (
         <div className="fixed inset-0 z-50">
             <div className="absolute inset-0 bg-black/40" onClick={onClose} />
             <div className="absolute inset-0 grid place-items-center p-4">
-                <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl p-6">
-                    <div className="flex items-center justify-between mb-2">
-                        <h3 className="text-lg font-semibold">Dettaglio referto</h3>
-                        <button className="px-3 py-1.5 rounded-lg border text-sm hover:bg-slate-50" onClick={onClose}>Chiudi</button>
-                    </div>
-
-                    <div className="space-y-1 text-sm">
-                        <div><span className="text-slate-500">Report ID: </span>{report.reportId}</div>
-                        <div><span className="text-slate-500">Laboratorio: </span>{report.labId}</div>
-                        <div><span className="text-slate-500">Emesso: </span>{human}</div>
-                        <div className="pt-2">
-                            <span className="text-slate-500">Stato: </span>
-                            <span className={report.status === "VALID" ? "badge-ok" : report.status === "UPDATED" ? "badge-warn" : "badge-err"}>{report.status}</span>
-                        </div>
-                    </div>
-
-                    <div className="mt-4 border-top pt-4">
-                        <div className="mb-2 text-sm font-medium">Condividi con:</div>
-                        <div className="flex items-center gap-2">
-                            <select className="border rounded-lg px-2 py-1 text-sm" value={dest} onChange={(e) => setDest(e.target.value)}>
-                                {HOSPITALS.map((h) => (<option key={h} value={h}>{h}</option>))}
-                            </select>
-
-                            {!already ? (
-                                <button className="px-3 py-1.5 rounded-lg text-sm bg-blue-600 text-white hover:bg-blue-700" onClick={() => onToggleAccess(report.reportId, dest, true)}>
-                                    Concedi accesso
-                                </button>
-                            ) : (
-                                <button className="px-3 py-1.5 rounded-lg text-sm border hover:bg-slate-50" onClick={() => onToggleAccess(report.reportId, dest, false)}>
-                                    Revoca accesso
-                                </button>
-                            )}
-                        </div>
-
-                        <div className="mt-2 text-xs text-slate-500">
-                            Autorizzati: {report.access.length ? report.access.join(", ") : "—"}
-                        </div>
+                <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl p-6">
+                    <h3 className="text-lg font-semibold">Revoca accesso</h3>
+                    <p className="text-sm text-slate-700 mt-2">
+                        Revocare l’accesso di <strong>{hospId}</strong> al referto <strong>{reportId}</strong>?
+                    </p>
+                    <p className="text-sm text-slate-600 mt-2">
+                        La revoca è <strong>immediata</strong> lato sistema per nuove aperture (soft revoke).
+                        Se vuoi impedire l’uso di copie o chiavi già salvate, chiedi al LAB di pubblicare una <strong>nuova versione</strong> oppure di <strong>revocare il referto</strong> (revoca forte).
+                    </p>
+                    {err && <div className="text-sm text-red-600 mt-2">{err}</div>}
+                    <div className="mt-4 flex justify-end gap-2">
+                        <button className="rounded-lg border px-3 py-1.5 text-sm hover:bg-slate-50" onClick={onClose} disabled={busy}>Annulla</button>
+                        <button className="rounded-lg bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700" onClick={doRevoke} disabled={busy}>
+                            {busy ? "Revoco…" : "Revoca ora"}
+                        </button>
                     </div>
                 </div>
             </div>
