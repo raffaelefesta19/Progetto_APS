@@ -2,7 +2,7 @@
 <module type="WEB_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Python" name="Python facet">
-      <configuration sdkName="Python 3.13 (Project_Work_APS)" />
+      <configuration sdkName="Python 3.13 virtualenv at ~/WebstormProjects/Recupero_Project_Work_APS/.venv" />
     </facet>
   </component>
   <component name="NewModuleRootManager">
@@ -14,6 +14,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Python 3.13 (Project_Work_APS) interpreter library" level="application" />
+    <orderEntry type="library" name="Python 3.13 virtualenv at ~/WebstormProjects/Recupero_Project_Work_APS/.venv interpreter library" level="application" />
   </component>
 </module>

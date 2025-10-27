@@ -5,24 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="31c2f5f0-90a4-49aa-b92c-aa806112e0cf" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/backend/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/apscrypto/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/apscrypto/digest.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/apscrypto/hybrid.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/apscrypto/keys.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/apscrypto/sign.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/apscrypto/utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/ca.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/ledger.jsonl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/ledger.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/progetto_aps/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/progetto_aps/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/progetto_aps/src/auth/AuthContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/progetto_aps/src/auth/AuthContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/progetto_aps/src/auth/seed.ts" beforeDir="false" afterPath="$PROJECT_DIR$/progetto_aps/src/auth/seed.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/progetto_aps/src/auth/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/progetto_aps/src/auth/types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/progetto_aps/src/auth/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/progetto_aps/src/auth/utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/progetto_aps/src/components/layout/PublicLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/progetto_aps/src/components/layout/PublicLayout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/progetto_aps/src/components/layout/PublicShell.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/progetto_aps/src/components/layout/PublicShell.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/progetto_aps/src/components/layout/RoleLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/progetto_aps/src/components/layout/RoleLayout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/progetto_aps/src/main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/progetto_aps/src/main.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/progetto_aps/src/pages/Hospital.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/progetto_aps/src/pages/Hospital.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/progetto_aps/src/pages/Lab.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/progetto_aps/src/pages/Lab.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/progetto_aps/src/pages/Ledger.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/progetto_aps/src/pages/Ledger.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/progetto_aps/src/pages/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/progetto_aps/src/pages/Login.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/progetto_aps/src/pages/Patient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/progetto_aps/src/pages/Patient.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/progetto_aps/src/pages/Register.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/progetto_aps/src/pages/Register.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/progetto_aps/src/store/ReportsContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/progetto_aps/src/store/ReportsContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/progetto_aps/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/progetto_aps/vite.config.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,21 +46,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/raffaelefesta/WebstormProjects/Recupero_Project_Work_APS&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/home/raffaelefesta/WebstormProjects/Recupero_Project_Work_APS/progetto_aps/node_modules/typescript/lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/home/raffaelefesta/WebstormProjects/Recupero_Project_Work_APS/progetto_aps",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "ts.external.directory.path": "/home/raffaelefesta/WebstormProjects/Recupero_Project_Work_APS/progetto_aps/node_modules/typescript/lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
@@ -75,6 +70,14 @@
         <entry key="com.intellij.reactbuddy.storybook" value="false" />
       </map>
     </option>
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/progetto_aps" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -94,7 +97,7 @@
       <workItem from="1761470026764" duration="8349000" />
       <workItem from="1761493153442" duration="3197000" />
       <workItem from="1761553611406" duration="6385000" />
-      <workItem from="1761575258163" duration="4015000" />
+      <workItem from="1761575258163" duration="4699000" />
     </task>
     <servers />
   </component>
