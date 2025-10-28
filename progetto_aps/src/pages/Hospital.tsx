@@ -31,7 +31,6 @@ export default function Hospital() {
 
     // mostro solo referti correnti per i quali ho accesso
     const allowedCurrent = useMemo(() => {
-        // dedup per currentId
         const map = new Map<string, typeof reports[number]>();
         for (const r of reports) {
             if (!r.access.includes(HOSP_ID)) continue;  // access calcolato sul current
@@ -120,18 +119,18 @@ export default function Hospital() {
                     status: filtered.find((r) => r.currentId === openId)!.status,
                 } : null}
                 onClose={() => setOpenId(null)}
-                onOpenReport={async (reportId, labId) => {
+                onOpenReport={async (reportId) => {
                     await fetch(`${API_BASE}/keys/init`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ actors: [HOSP_ID, labId] }),
+                        body: JSON.stringify({ actors: [HOSP_ID] }), // non serve il labId
                     }).catch(() => {});
                     let resp: Response;
                     try {
                         resp = await fetch(`${API_BASE}/hosp/open`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ reportId, hospitalId: HOSP_ID, labId }),
+                            body: JSON.stringify({ reportId, hospitalId: HOSP_ID }),
                         });
                     } catch {
                         throw new Error("Backend non raggiungibile (Flask non avviato?).");
@@ -170,6 +169,9 @@ function normalizedOpenError(raw: unknown, status: number): string {
     }
     if (s.includes("invalid lab signature")) {
         return "Firma del laboratorio non valida. Rifiutare il referto e contattare il LAB.";
+    }
+    if (s.includes("ledger hash mismatch") || s.includes("publish event not found")) {
+        return "Incoerenza con il ledger: il referto non deve essere usato.";
     }
     if (s.includes("decrypt failed")) {
         return "Impossibile decifrare: chiave non disponibile per questa struttura.";
@@ -225,7 +227,7 @@ function ReportModal({
                      }: {
     report: { reportId: string; labId: string; issuedAt: string; status: Status } | null;
     onClose: () => void;
-    onOpenReport: (reportId: string, labId: string) => Promise<string>;
+    onOpenReport: (reportId: string) => Promise<string>;
 }) {
     const [loading, setLoading] = useState(false);
     const [plain, setPlain] = useState<string | null>(null);
@@ -240,7 +242,7 @@ function ReportModal({
         setLoading(true);
         setPlain(null);
         try {
-            const text = await onOpenReport(report.reportId, report.labId);
+            const text = await onOpenReport(report.reportId);
             setPlain(text);
         } catch (e) {
             setErr(e instanceof Error ? e.message : "Errore imprevisto");

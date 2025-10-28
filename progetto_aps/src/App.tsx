@@ -1,3 +1,4 @@
+// src/App.tsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import PublicShell from "./components/layout/PublicShell";
 import Login from "./pages/Login";
@@ -6,6 +7,7 @@ import Patient from "./pages/Patient";
 import Hospital from "./pages/Hospital";
 import Lab from "./pages/Lab";
 import Ledger from "./pages/Ledger";
+import Metrics from "./pages/Metrics";
 
 export default function App() {
     return (
@@ -20,6 +22,7 @@ export default function App() {
             <Route path="/hospital" element={<Hospital />} />
             <Route path="/lab" element={<Lab />} />
             <Route path="/ledger" element={<Ledger />} />
+            <Route path="/metrics" element={<Metrics />} />
             <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
     );
