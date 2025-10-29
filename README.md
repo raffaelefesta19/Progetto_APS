@@ -11,10 +11,10 @@ Sistema demo **end-to-end** per lo scambio sicuro di **referti sanitari** tra at
 ## 📽️ Demo
 
 <p align="center">
-  <img src="media/1a.gif" width="720" alt="Demo 1 – flusso principale" />
+  <img src="media/1a.gif" width="720" alt="Demo 1a – flusso principale" />
 </p>
 <p align="center">
-  <img src="media/1b.gif" width="720" alt="Demo 1 – flusso principale" />
+  <img src="media/1b.gif" width="720" alt="Demo 1b – flusso principale" />
 </p>
 
 <p align="center">

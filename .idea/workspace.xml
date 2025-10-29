@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31c2f5f0-90a4-49aa-b92c-aa806112e0cf" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/media/1.mp4" beforeDir="false" afterPath="$PROJECT_DIR$/media/1.mp4" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/media/1a.gif" beforeDir="false" afterPath="$PROJECT_DIR$/media/1a.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/media/1b.gif" beforeDir="false" afterPath="$PROJECT_DIR$/media/1b.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/media/2.gif" beforeDir="false" afterPath="$PROJECT_DIR$/media/2.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/media/2.mp4" beforeDir="false" afterPath="$PROJECT_DIR$/media/2.mp4" afterDir="false" />
-    </list>
+    <list default="true" id="31c2f5f0-90a4-49aa-b92c-aa806112e0cf" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
