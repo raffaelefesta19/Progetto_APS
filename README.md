@@ -8,6 +8,17 @@ Sistema demo **end-to-end** per lo scambio sicuro di **referti sanitari** tra at
 > ⚠️ Progetto didattico.
 
 ---
+## 📽️ Demo (inline)
+
+<p align="center">
+  <img src="media/1.gif" width="720" alt="Demo 1 – flusso principale" />
+</p>
+
+<p align="center">
+  <img src="media/2.gif" width="720" alt="Demo 2 – condivisione e revoche" />
+</p>
+
+---
 
 ## Struttura repository
 
