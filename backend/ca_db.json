@@ -1,0 +1,16 @@
+{
+  "certs": {
+    "LAB-34D256": {
+      "actorId": "LAB-34D256",
+      "pub": "-----BEGIN PUBLIC KEY-----\nMIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAsdjsx75swz6bEz6WgNki\nF40fL/FHEPr9Y2gEo1b31b+Bm/7CBs9TCfwOB59b3vjCO4bmb1LidgmYAL4rrps5\nxvc3hWDJbD78PNFoo9Xz3XjT94sQ2XacKWy1+qteqm45MJTFSC8DUV7+HksticIV\ns0hcWKX3H9Bs6LQ0bkCRi6FZ94jZpj1MpiyWRhK48GDFllL7wzrzE9spgpi4xcky\nPpV7GjS8KvtX738q6emZSsvm1Eah5jWlhdgxRcguoHOJ7d/9hmp1Dw4R2ghPz9S5\nfsOLQKsEWT71LGeTb5LEf4uxnasno2IZuMbP04W/M5DmuaWkkDyTCW6WGv2BBDtW\nNJTgmYy++4yNO4CxZ/o3FvKzEd+bha8QyX03jHhKfQJLjhf9GWCvQEoLvFfRgbLS\n8uRfNaaMNgaqUCHZg5Q1gRSqjpFgNQr+Yax/cg9B3sy2fVNzLlQmckPgAMX5g7gI\nsmeIfJaAcJ/3wUwsyXvcc0kX+IZRgNVTA1BpTnVcrT7/AgMBAAE=\n-----END PUBLIC KEY-----\n",
+      "issuedAt": 1761904691,
+      "valid": false
+    }
+  },
+  "crl": [
+    {
+      "actorId": "LAB-34D256",
+      "revokedAt": 1761904691
+    }
+  ]
+}
